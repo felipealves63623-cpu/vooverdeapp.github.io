@@ -73,7 +73,7 @@ summary{cursor:pointer;font-weight:600;color:var(--g2);padding:10px 0 4px}
 .fxs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}.fch{background:var(--g);color:#fff;border-radius:999px;padding:5px 6px 5px 12px;font-size:12px;font-weight:600;display:inline-flex;gap:8px;align-items:center}.fch b{background:rgba(255,255,255,.22);border-radius:50%;width:20px;height:20px;display:grid;place-items:center;cursor:pointer;font-size:11px}
 .qk{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.qk button{padding:7px 12px;font-size:13px;border-radius:999px}.qk button.on{background:var(--g);color:#fff;border-color:var(--g)}
 </style></head><body>
-<div class="top"><header><div class="hl"><div class="lg"><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><rect x="9" y="9" width="6" height="6" rx="1.5"/><path d="M7 7l2.5 2.5M17 7l-2.5 2.5M7 17l2.5-2.5M17 17l-2.5-2.5"/></svg></div><div style="min-width:0"><h1>Relatórios de Aplicação</h1><small id="num"></small></div></div><span class="pill" id="sst"></span></header>
+<div class="top"><header><div class="hl"><div class="lg"><svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><rect x="9" y="9" width="6" height="6" rx="1.5"/><path d="M7 7l2.5 2.5M17 7l-2.5 2.5M7 17l2.5-2.5M17 17l-2.5-2.5"/></svg></div><div style="min-width:0"><h1>Relatórios de Aplicação</h1><small id="num"></small></div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span class="pill" id="sst"></span><span class="pill" id="cst" onclick="sync(1)" style="cursor:pointer">☁</span></div></header>
 <div class="chips" id="chips"></div></div>
 <main>
 <div class="pn" id="p_f"><div class="two"><button class="s" onclick="novo()">＋ Novo relatório</button><button class="s" onclick="limpar()">Limpar campos</button></div><div id="app"></div></div>
@@ -97,7 +97,7 @@ summary{cursor:pointer;font-weight:600;color:var(--g2);padding:10px 0 4px}
 <div class="mod" id="mp"><div class="mb"><h2>Relatório pronto</h2><p id="pn" style="word-break:break-all;margin-top:0"></p><div class="th" id="pth"></div>
 <div style="display:grid;gap:8px"><button onclick="dl()">Baixar</button><button id="shb" onclick="shr()">Compartilhar</button><button class="s" id="wab" onclick="wa()">Enviar mensagem por WhatsApp</button><button class="s" id="mlb" onclick="ml()">Enviar por e-mail</button><button class="s" id="vwb" onclick="vw()">Visualizar</button><button class="s" onclick="cl('mp')">Fechar</button></div></div></div>
 <div class="mod" id="bz" style="z-index:40"><div class="mb" style="text-align:center;max-width:300px"><div class="spn"></div><p id="bzt" style="margin:0;color:var(--gy)"></p></div></div>
-<div class="mod on" id="lg" style="z-index:30;background:var(--g)"><div class="mb"><h2 id="lt"></h2><p id="ld" style="color:var(--gy);font-size:13px;margin-top:0"></p><label id="lu">Seu nome<input id="lun" autocomplete="username"></label><label style="margin-top:8px">Senha<input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key=='Enter')lgo()"></label><label id="lc" style="margin-top:8px">Confirmar senha<input id="lp2" type="password" autocomplete="new-password" onkeydown="if(event.key=='Enter')lgo()"></label><p id="le" style="color:#b42318;min-height:18px;margin:8px 0"></p><button style="width:100%" id="lb" onclick="lgo()"></button><button class="s" id="lf" style="width:100%;margin-top:8px" onclick="lreset()">Esqueci a senha</button></div></div>
+<div class="mod on" id="lg" style="z-index:30;background:var(--g)"><div class="mb"><h2 id="lt">Entrar</h2><p id="ld" style="color:var(--gy);font-size:13px;margin-top:0">Use o e-mail e a senha da equipe.</p><label>E-mail<input id="lun" type="email" autocomplete="username" inputmode="email"></label><label style="margin-top:8px">Senha<input id="lp" type="password" autocomplete="current-password" onkeydown="if(event.key=='Enter')lgo()"></label><p id="le" style="color:#b42318;min-height:18px;margin:8px 0"></p><button style="width:100%" id="lb" onclick="lgo()">Entrar</button></div></div>
 <datalist id="dl_cli"></datalist><datalist id="dl_faz"></datalist><datalist id="dl_cid"></datalist><datalist id="dl_cul"></datalist><datalist id="dl_prod"></datalist><datalist id="dl_drone"></datalist><datalist id="dl_qs"><option value="Aplicação com drone"><option value="Aplicação de herbicida"><option value="Aplicação de fungicida"><option value="Aplicação de inseticida"><option value="Adubação foliar"><option value="Maturador"><option value="Semeadura com drone"></datalist>
 <div id="toast"></div>
 <script>
@@ -114,7 +114,7 @@ const dbd=k=>DB.then(d=>new Promise(r=>{const t=d.transaction('s','readwrite');t
 const dbc=()=>DB.then(d=>new Promise(r=>{const t=d.transaction('s','readwrite');t.objectStore('s').clear();t.oncomplete=r;t.onerror=r})).catch(()=>{});
 const dbg=k=>DB.then(d=>new Promise(r=>{const q=d.transaction('s').objectStore('s').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})).catch(()=>{});
 const pill=t=>{$('#sst').textContent=t},hm=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-const save=()=>{DIRTY=1;pill('Editando…');clearTimeout(tm);tm=setTimeout(async()=>{await dbs('draft',S.R);await dbs('co',S.C);pill('Rascunho salvo '+hm())},700)};
+let tsv,tsq;const save=()=>{DIRTY=1;pill('Editando…');clearTimeout(tsv);tsv=setTimeout(()=>sv(true),5000);clearTimeout(tm);tm=setTimeout(async()=>{await dbs('draft',S.R);await dbs('co',S.C);pill('Rascunho salvo '+hm())},700)};
 /* ---------- utilidades ---------- */
 const n=v=>parseFloat(String(v||0).replace(/\./g,m=>/,/.test(v)?'':m).replace(',','.'))||0;
 const fmt=v=>v.toLocaleString('pt-BR',{maximumFractionDigits:2}),brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -148,8 +148,8 @@ $('#p_b').innerHTML=`<section style="padding:12px"><div class="sbx"><svg viewBox
 $('#p_r').innerHTML=`<section>${fbar()}</section><div id="rr"></div>`;
 $('#p_a').innerHTML=`<section><h2>Empresa</h2><div class="gr">${inp('C','nome','Nome da empresa')}${inp('C','tel','Telefone / contato','tel')}${inp('C','mail','E-mail ou site (opcional)')}${inp('C','cnpj','CNPJ da empresa')}${inp('C','end','Endereço / cidade')}${inp('C','reg','Registro / licença do operador')}</div>
 <label style="margin-top:10px">Logomarca<input type="file" accept="image/*" id="logo"></label><div class="pw" style="margin-top:8px" id="logoW" hidden><img id="logoPv" style="max-height:80px"></div>
-<button class="s" onclick="S.C.logo='';rLogo();save()" style="margin-top:6px">Remover logo</button>
-<p class="hint">Empresa e logo ficam salvas neste aparelho para os próximos relatórios.</p></section><section><h2>Backup dos dados</h2><p style="margin-top:0;color:var(--gy);font-size:13px">Guarde uma cópia dos relatórios, da empresa e do histórico. Use para trocar de aparelho ou antes de limpar o navegador.</p><div class="two" style="margin:0"><button onclick="expo()">Exportar backup</button><button class="s" onclick="$('#bk').click()">Importar backup</button></div><input type="file" id="bk" accept=".json,application/json" hidden onchange="impo(this.files[0]);this.value=''"><p class="hint" id="stg"></p></section><section><h2>Conta neste aparelho</h2><p id="who" style="margin-top:0;color:var(--gy)"></p><button class="s" onclick="sair()">Sair</button></section>`;
+<button class="s" onclick="S.C.logo='';cfgDirty();rLogo();save()" style="margin-top:6px">Remover logo</button>
+<p class="hint">Empresa e logo ficam salvas neste aparelho para os próximos relatórios.</p></section><section><h2>Backup dos dados</h2><p style="margin-top:0;color:var(--gy);font-size:13px">Guarde uma cópia dos relatórios, da empresa e do histórico. Use para trocar de aparelho ou antes de limpar o navegador.</p><div class="two" style="margin:0"><button onclick="expo()">Exportar backup</button><button class="s" onclick="$('#bk').click()">Importar backup</button></div><input type="file" id="bk" accept=".json,application/json" hidden onchange="impo(this.files[0]);this.value=''"><p class="hint" id="stg"></p></section><section><h2>Nuvem da equipe</h2><p id="who" style="margin:0 0 4px;color:var(--gy)"></p><p id="syn" class="hint" style="margin:0 0 10px"></p><div class="two" style="margin:0"><button onclick="sync(1)">Sincronizar agora</button><button class="s" onclick="sair()">Sair</button></div><p class="hint">Os dados são salvos neste aparelho e enviados à nuvem automaticamente. Ao sair, os dados são apagados deste aparelho (continuam na nuvem).</p></section>`;
 /* ---------- renderização do formulário ---------- */
 function rLogo(){const e=$('#logoPv');e.src=S.C.logo||'';$('#logoW').hidden=!S.C.logo}
 const imgKB=()=>{let b=0;[...S.R.mapas,...S.R.fotos].forEach(x=>b+=x.src.length*.75);return b};
@@ -179,24 +179,25 @@ const ck=(id,ok,t)=>{const e=$('#ck_'+id);if(e){e.textContent=ok?(t||'✓ comple
 ck('c',R.cliente);ck('a',R.data&&R.cultura);ck('o',ha>0&&R.ops.some(o=>(o.itens||[]).some(i=>i.nome)));ck('v',n(R.vha)>0);ck('m',R.mapas.length,R.mapas.length+' mapa(s)');ck('f',R.fotos.length,R.fotos.length+' foto(s)');
 return{ha,cl,ac,tot,fin,sal}}
 document.addEventListener('input',e=>{const t=e.target,d=t.dataset;
-if(d.k){if(d.k=='uf')t.value=t.value.toUpperCase();S[d.s][d.k]=t.value;if(d.s=='Q'){calcQ();saveQ()}else{if(d.k=='sit')S.R.sm=1;calc();save()}}
+if(d.k){if(d.k=='uf')t.value=t.value.toUpperCase();S[d.s][d.k]=t.value;if(d.s=='C')cfgDirty();if(d.s=='Q'){calcQ();saveQ()}else{if(d.k=='sit')S.R.sm=1;calc();save()}}
 else if(d.ql){S.Q.itens[d.i][d.ql]=t.value;calcQ();saveQ()}
 else if(d.o){const o=S.R.ops[d.i];if(d.j!=null)o.itens[d.j][d.o]=t.value;else o[d.o]=t.value;calc();save()}
 else if(d.p!=null){S.R.fotos[d.p].leg=t.value;save()}
 else if(d.m!=null){S.R.mapas[d.m].leg=t.value;save()}});
 document.addEventListener('change',e=>{const t=e.target,s=t.dataset.s;if(t.dataset.k!='cliente'||(s!='R'&&s!='Q'))return;const v=nt(t.value);if(!v)return;const X=S[s],m=[...Object.values(IX),...Object.values(OQ)].filter(r=>nt(r.cliente)==v&&r.id!=X.id).sort((a,b)=>(b.data||'').localeCompare(a.data||''))[0];if(!m)return;let c=0;['doc','fazenda','cidade','uf','ctel',s=='R'?'resp':'email'].forEach(k=>{if(!X[k]&&m[k]){X[k]=m[k];c++}});if(c){syncF();if(s=='R'){calc();save()}else{calcQ();saveQ()}toast('Dados do cliente preenchidos')}});
-$('#logo').onchange=async e=>{const f=e.target.files[0];if(f){const s=await rd(f,500,.9,f.type=='image/png');if(s){S.C.logo=s;rLogo();save()}else toast('Não foi possível ler a imagem')}e.target.value=''};
+$('#logo').onchange=async e=>{const f=e.target.files[0];if(f){const s=await rd(f,500,.9,f.type=='image/png');if(s){S.C.logo=s;cfgDirty();rLogo();save()}else toast('Não foi possível ler a imagem')}e.target.value=''};
 $('#map').onchange=e=>{addImgs('mapas',e.target.files);e.target.value=''};
 $('#fotos').onchange=e=>{addImgs('fotos',e.target.files);e.target.value=''};
 $('#cam').onchange=e=>{addImgs('fotos',e.target.files);e.target.value=''};
 /* ---------- fluxos ---------- */
-async function mk(){const k=((await dbg('n'))||0)+1;await dbs('n',k);return norm({id:Date.now(),num:new Date().getFullYear()+'-'+String(k).padStart(3,'0'),data:today()})}
-async function sv(silent){const R=S.R;if(!R||!R.id)return;if(silent&&(!DIRTY||(!R.cliente&&!R.fazenda)))return;await dbs('r:'+R.id,R);IX[R.id]=lite(R);await dbs('ix',IX);await dbs('draft',R);await dbs('co',S.C);DIRTY=0;rDL();pill('Salvo '+hm());if(!silent)toast('Relatório salvo no histórico')}
+const maxN=(L,pre)=>L.reduce((m,r)=>{const x=String(r.num||'');return x.startsWith(pre)?Math.max(m,parseInt(x.slice(pre.length))||0):m},0);
+async function mk(){const y=new Date().getFullYear(),k=Math.max((await dbg('n'))||0,maxN(Object.values(IX),y+'-'))+1;await dbs('n',k);return norm({id:Date.now(),num:y+'-'+String(k).padStart(3,'0'),data:today()})}
+async function sv(silent){const R=S.R;if(!R||!R.id)return;if(silent&&(!DIRTY||(!R.cliente&&!R.fazenda)))return;R.ts=Date.now();await dbs('r:'+R.id,R);IX[R.id]=lite(R);pend('r:'+R.id,'rel');await dbs('ix',IX);await dbs('draft',R);await dbs('co',S.C);DIRTY=0;rDL();pill('Salvo '+hm());if(!silent)toast('Relatório salvo no histórico')}
 async function novo(){if(!confirm('Criar novo relatório? O atual será salvo no histórico.'))return;await sv(true);S.R=await mk();fill();save();scrollTo(0,0)}
 function limpar(){if(!confirm('Limpar todos os campos deste relatório? Isso não pode ser desfeito.'))return;S.R=norm({id:S.R.id,num:S.R.num,data:today()});fill();save()}
 async function opn(id,g){await sv(true);const r=await dbg('r:'+id);if(!r){toast('Relatório não encontrado');return}S.R=norm(r);fill();await dbs('draft',S.R);DIRTY=0;await go('f');if(g)openFmt()}
-async function del(id){if(!confirm('Excluir este relatório do histórico?'))return;await dbd('r:'+id);delete IX[id];await dbs('ix',IX);if(S.R.id==id){S.R=await mk();fill();await dbs('draft',S.R);DIRTY=0}rDL();draw()}
-async function pay(id){const r=await dbg('r:'+id);if(!r)return;const f=fx(r);if(!confirm('Marcar como pago ('+brl(f.fin)+')?'))return;r.rec=String(f.fin).replace('.',',');r.sit='Pago';await dbs('r:'+id,r);IX[id]=lite(r);await dbs('ix',IX);if(S.R.id==id){S.R.rec=r.rec;S.R.sit='Pago';fill();dbs('draft',S.R)}draw();toast('Marcado como pago')}
+async function del(id){if(!confirm('Excluir este relatório do histórico?'))return;await dbd('r:'+id);delete IX[id];await dbs('ix',IX);pend('r:'+id,'del');if(S.R.id==id){S.R=await mk();fill();await dbs('draft',S.R);DIRTY=0}rDL();draw()}
+async function pay(id){const r=await dbg('r:'+id);if(!r)return;const f=fx(r);if(!confirm('Marcar como pago ('+brl(f.fin)+')?'))return;r.rec=String(f.fin).replace('.',',');r.sit='Pago';r.ts=Date.now();await dbs('r:'+id,r);IX[id]=lite(r);pend('r:'+id,'rel');await dbs('ix',IX);if(S.R.id==id){S.R.rec=r.rec;S.R.sit='Pago';fill();dbs('draft',S.R)}draw();toast('Marcado como pago')}
 async function dup(id){await sv(true);const r=await dbg('r:'+id);if(!r)return;const k=await mk(),c=norm(r);['mapas','rec','sit','sm','obs','acob','desc','adic','ini','fim'].forEach(x=>delete c[x]);c.fotos=[];c.mapas=[];c.id=k.id;c.num=k.num;c.data=today();S.R=c;fill();save();go('f');toast('Relatório duplicado: ajuste data e área')}
 /* ---------- gerar relatório (PDF ou imagem) ---------- */
 const W=720,Hh=1280,M=40,GR='#14452f',LT='#e8f1ec',GY='#6b7280',BD='#cfd8d3',FN='Helvetica,Arial,sans-serif';
@@ -285,18 +286,17 @@ function shr(){navigator.share({files:OUT.files.map(f=>new File([f.blob],f.name,
 function vw(){window.open(OU[0])}
 /* ---------- início / acesso local ---------- */
 async function migrate(){let ix=await dbg('ix');if(!ix){ix={};const h=(await dbg('hist'))||{};for(const id in h){const r=norm(h[id]);await dbs('r:'+id,r);ix[id]=lite(r)}await dbs('ix',ix);await dbd('hist')}IX=ix}
-async function start(){S.C=(await dbg('co'))||{};Object.assign(S.P,(await dbg('pref'))||{});await migrate();OQ=(await dbg('orc'))||{};S.R=norm((await dbg('draft'))||await mk());S.Q=normQ((await dbg('qdraft'))||await mkQ());DIRTY=0;DQ=0;fill();qfill();$('#who').textContent='Conectado como '+AU.u;pill('Pronto');go('f')}
-async function hs(p,salt){try{const e=new TextEncoder(),k=await crypto.subtle.importKey('raw',e.encode(p),'PBKDF2',false,['deriveBits']),b=await crypto.subtle.deriveBits({name:'PBKDF2',salt:e.encode(salt),iterations:100000,hash:'SHA-256'},k,256);return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of salt+p)h=(h*33)^c.charCodeAt(0);return'x'+(h>>>0)}}
-async function lshow(){AU=await dbg('auth');$('#lt').textContent=AU?'Entrar':'Criar acesso';$('#ld').textContent=AU?'Olá, '+AU.u+'. Digite sua senha para abrir seus relatórios.':'Crie um nome e uma senha para proteger os relatórios neste aparelho.';$('#lu').style.display=$('#lc').style.display=AU?'none':'block';$('#lf').style.display=AU?'block':'none';$('#lb').textContent=AU?'Entrar':'Criar e entrar';$('#le').textContent='';$('#lg').classList.add('on')}
-async function lgo(){const p=$('#lp').value,e=$('#le');e.textContent='';
-if(AU){if(await hs(p,AU.s)!=AU.h){e.textContent='Senha incorreta.';return}}
-else{const u=$('#lun').value.trim();if(!u||p.length<4){e.textContent='Informe seu nome e uma senha com 4 ou mais caracteres.';return}if(p!=$('#lp2').value){e.textContent='As senhas não são iguais.';return}const sl=Math.random().toString(36).slice(2);AU={u,s:sl,h:await hs(p,sl)};await dbs('auth',AU)}
-$('#lp').value=$('#lp2').value='';$('#lg').classList.remove('on');try{navigator.storage.persist()}catch(x){}await start()}
-async function lreset(){if(!confirm('Redefinir apaga o acesso e TODOS os relatórios salvos neste aparelho. Se você tem um backup, poderá restaurá-lo depois. Continuar?'))return;await dbc();IX={};OQ={};$('#lun').value='';await lshow()}
-async function sair(){clearTimeout(tm);await sv(true);await sq(true);await dbs('draft',S.R);await dbs('qdraft',S.Q);await dbs('co',S.C);S.R={};S.C={};S.Q={};await lshow()}
+async function start(){STARTED=1;cl('lg');S.C=(await dbg('co'))||{};Object.assign(S.P,(await dbg('pref'))||{});await migrate();OQ=(await dbg('orc'))||{};S.R=norm((await dbg('draft'))||await mk());S.Q=normQ((await dbg('qdraft'))||await mkQ());DIRTY=0;DQ=0;fill();qfill();$('#who').textContent='Conectado como '+(SESS&&SESS.email||'');pill('Pronto');go('f');schedSync(300)}
+async function lshow(){$('#le').textContent='';$('#lb').disabled=false;$('#lg').classList.add('on')}
+async function lgo(){const e=$('#le');e.textContent='';const em=$('#lun').value.trim(),p=$('#lp').value;if(!em||!p){e.textContent='Informe o e-mail e a senha da equipe.';return}$('#lb').disabled=true;
+try{await auth({email:em,password:p},'password')}catch(x){$('#lb').disabled=false;e.textContent=x instanceof TypeError?'Sem conexão com a internet. Conecte-se para entrar.':(x.status==400||x.status==401?'E-mail ou senha incorretos.':'Erro ao entrar: '+x.message);return}
+$('#lb').disabled=false;$('#lp').value='';try{navigator.storage.persist()}catch(x){}if(STARTED){cl('lg');schedSync(0)}else await start()}
+async function sair(){if(!confirm('Sair deste aparelho? Os dados já enviados continuam salvos na nuvem, mas serão apagados daqui.'))return;clearTimeout(tm);await sv(true);await sq(true);busy('Enviando alterações…');await tick();await sync();busy();
+if(Object.keys(PQ).length&&!confirm('Há alterações que ainda NÃO foram enviadas para a nuvem (sem internet?). Sair agora apaga essas alterações. Sair mesmo assim?'))return;
+await dbc();IX={};OQ={};PQ={};UPL=new Set();SESS=null;STARTED=0;S.R={};S.Q={};S.C={};cloud('');$('#lun').value='';await lshow()}
 /* ---------- backup ---------- */
 async function expo(){await sv(true);busy('Preparando backup…');await tick();const hist={};for(const id in IX){const r=await dbg('r:'+id);if(r)hist[id]=r}const d={app:'relatorios-drone',v:2,co:S.C,hist,n:(await dbg('n'))||0,orc:OQ,nq:(await dbg('nq'))||0},a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'}));a.download='backup-relatorios-'+today()+'.json';document.body.append(a);a.click();a.remove();busy();toast('Backup baixado')}
-async function impo(f){if(!f)return;try{const d=JSON.parse(await f.text());if(d.app!='relatorios-drone')throw 0;const k=Object.keys(d.hist||{}).length;if(!confirm('Importar '+k+' relatório(s)? Relatórios com o mesmo código serão substituídos.'))return;busy('Importando…');await tick();for(const id in d.hist){const r=norm(d.hist[id]);await dbs('r:'+id,r);IX[id]=lite(r)}await dbs('ix',IX);if(d.orc){Object.assign(OQ,d.orc);await dbs('orc',OQ);await dbs('nq',Math.max((await dbg('nq'))||0,d.nq||0))}if(d.co&&d.co.nome){S.C=d.co;await dbs('co',S.C);fill()}await dbs('n',Math.max((await dbg('n'))||0,d.n||0));rDL();busy();toast('Backup restaurado: '+k+' relatório(s)')}catch(e){busy();alert('Arquivo de backup inválido.')}}
+async function impo(f){if(!f)return;try{const d=JSON.parse(await f.text());if(d.app!='relatorios-drone')throw 0;const k=Object.keys(d.hist||{}).length;if(!confirm('Importar '+k+' relatório(s)? Relatórios com o mesmo código serão substituídos.'))return;busy('Importando…');await tick();for(const id in d.hist){const r=norm(d.hist[id]);r.ts=Date.now();await dbs('r:'+id,r);IX[id]=lite(r);pend('r:'+id,'rel')}await dbs('ix',IX);if(d.orc){Object.assign(OQ,d.orc);Object.keys(d.orc).forEach(k=>{OQ[k].ts=Date.now();pend('q:'+k,'orc')});await dbs('orc',OQ);await dbs('nq',Math.max((await dbg('nq'))||0,d.nq||0))}if(d.co&&d.co.nome){S.C=d.co;cfgDirty();await dbs('co',S.C);fill()}await dbs('n',Math.max((await dbg('n'))||0,d.n||0));rDL();busy();toast('Backup restaurado: '+k+' relatório(s)')}catch(e){busy();alert('Arquivo de backup inválido.')}}
 async function stg(){const e=$('#stg');e.textContent='Relatórios salvos: '+Object.keys(IX).length;try{const s=await navigator.storage.estimate();e.textContent+=' · espaço usado: '+(s.usage/1048576).toFixed(1).replace('.',',')+' MB'}catch(x){}}
 /* ---------- app instalável e offline ---------- */
 (()=>{try{const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d');x.fillStyle='#14452f';x.fillRect(0,0,512,512);x.fillStyle='#fff';x.font='bold 220px Helvetica,Arial';x.textAlign='center';x.textBaseline='middle';x.fillText('RA',256,270);const u=c.toDataURL('image/png'),a=document.createElement('link');a.rel='apple-touch-icon';a.href=u;document.head.append(a);
@@ -392,7 +392,7 @@ const TERMOS=`1. OBJETO — O presente orçamento refere-se à prestação de se
 7. CANCELAMENTO — Cancelamentos ou alterações devem ser comunicados com antecedência mínima de 48 horas.
 8. FORO — Fica eleito o foro da comarca do prestador para dirimir eventuais dúvidas oriundas deste contrato.`;
 const normQ=q=>{if(!q.itens||!q.itens.length)q.itens=[{desc:'Aplicação com drone'}];return q};
-async function mkQ(){const k=((await dbg('nq'))||0)+1;await dbs('nq',k);return normQ({id:Date.now(),num:'ORC-'+new Date().getFullYear()+'-'+String(k).padStart(3,'0'),data:today(),val:'15',status:'Em elaboração',termos:S.C.termos||TERMOS})}
+async function mkQ(){const y=new Date().getFullYear(),k=Math.max((await dbg('nq'))||0,maxN(Object.values(OQ),'ORC-'+y+'-'))+1;await dbs('nq',k);return normQ({id:Date.now(),num:'ORC-'+y+'-'+String(k).padStart(3,'0'),data:today(),val:'15',status:'Em elaboração',termos:S.C.termos||TERMOS})}
 function qv(q){let ha=0,sub=0;(q.itens||[]).forEach(i=>{const h=n(i.ha);ha+=h;sub+=h*n(i.vha)});const tot=sub-n(q.desc)+n(q.adic);let vali='';if(q.data&&n(q.val)>0){const d=new Date(q.data+'T12:00:00');d.setDate(d.getDate()+Math.round(n(q.val)));vali=ymd(d)}return{ha,sub,tot,vali}}
 function calcQ(){const R=S.Q;if(!R.itens)return{ha:0,sub:0,tot:0,vali:''};const q=qv(R);R.itens.forEach((i,k)=>{const e=$('#qs'+k);if(e)e.textContent=brl(n(i.ha)*n(i.vha))});
 $('#qfin').innerHTML=`<div>Área total<b>${fmt(q.ha)} ha</b></div><div>Subtotal<b>${brl(q.sub)}</b></div><div class="k">Valor total<b>${brl(q.tot)}</b></div>`;
@@ -404,17 +404,17 @@ const qAdd=()=>{const p=S.Q.itens[S.Q.itens.length-1];S.Q.itens.push({vha:p&&p.v
 function qRm(i){if(!confirm('Excluir este serviço?'))return;S.Q.itens.splice(i,1);if(!S.Q.itens.length)S.Q.itens.push({});rQI();saveQ()}
 function qfill(){syncF();rQI();hdr()}
 const hdr=()=>{$('#num').textContent=TB=='q'?'Orçamento nº '+(S.Q.num||''):'Relatório nº '+(S.R.num||'')};
-const saveQ=()=>{DQ=1;pill('Editando…');clearTimeout(tq);tq=setTimeout(async()=>{await dbs('qdraft',S.Q);pill('Rascunho salvo '+hm())},700)};
-async function sq(silent){const Q=S.Q;if(!Q||!Q.id)return;if(silent&&(!DQ||(!Q.cliente&&!Q.fazenda)))return;OQ[Q.id]=JSON.parse(JSON.stringify(Q));await dbs('orc',OQ);await dbs('qdraft',Q);DQ=0;rDL();pill('Orçamento salvo '+hm());if(!silent)toast('Orçamento salvo');rQN()}
+const saveQ=()=>{DQ=1;pill('Editando…');clearTimeout(tsq);tsq=setTimeout(()=>sq(true),5000);clearTimeout(tq);tq=setTimeout(async()=>{await dbs('qdraft',S.Q);pill('Rascunho salvo '+hm())},700)};
+async function sq(silent){const Q=S.Q;if(!Q||!Q.id)return;if(silent&&(!DQ||(!Q.cliente&&!Q.fazenda)))return;Q.ts=Date.now();OQ[Q.id]=JSON.parse(JSON.stringify(Q));await dbs('orc',OQ);pend('q:'+Q.id,'orc');await dbs('qdraft',Q);DQ=0;rDL();pill('Orçamento salvo '+hm());if(!silent)toast('Orçamento salvo');rQN()}
 function rQN(){const e=$('#chips [data-qs=l] i');if(e)e.textContent=Object.keys(OQ).length}
 async function qNew(){if(!confirm('Criar novo orçamento? O atual será salvo na lista.'))return;await sq(true);S.Q=await mkQ();qfill();saveQ();scrollTo(0,0)}
 function qClear(){if(!confirm('Limpar todos os campos deste orçamento?'))return;S.Q=normQ({id:S.Q.id,num:S.Q.num,data:today(),val:'15',status:'Em elaboração',termos:S.C.termos||TERMOS});qfill();saveQ()}
-function qTermos(m){if(m==1){if(!confirm('Substituir o texto atual pelo modelo padrão?'))return;S.Q.termos=S.C.termos||TERMOS;syncF();saveQ()}else{S.C.termos=S.Q.termos;dbs('co',S.C);toast('Salvo como padrão para os próximos orçamentos')}}
+function qTermos(m){if(m==1){if(!confirm('Substituir o texto atual pelo modelo padrão?'))return;S.Q.termos=S.C.termos||TERMOS;syncF();saveQ()}else{S.C.termos=S.Q.termos;cfgDirty();dbs('co',S.C);toast('Salvo como padrão para os próximos orçamentos')}}
 function sqs(k){QS=k;$$('#chips [data-qs]').forEach(b=>b.classList.toggle('on',b.dataset.qs==k));$('#qe').hidden=k!='e';$('#ql').hidden=k!='l';$('#qbar').style.display=k=='e'?'flex':'none';if(k=='l')rQL();scrollTo(0,0)}
 async function qOpen(id,send){await sv(true);await sq(true);const q=OQ[id];if(!q)return;S.Q=normQ(JSON.parse(JSON.stringify(q)));qfill();await dbs('qdraft',S.Q);DQ=0;QS='e';await go('q');sqs('e');if(send)openFmt('orc')}
 async function qDup(id){await sq(true);const q=OQ[id];if(!q)return;const k=await mkQ(),c=JSON.parse(JSON.stringify(q));c.id=k.id;c.num=k.num;c.data=today();c.status='Em elaboração';delete c.ddec;delete c.odec;S.Q=normQ(c);qfill();DQ=1;await sq(true);QS='e';await go('q');sqs('e');toast('Orçamento duplicado')}
-async function qDel(id){if(!confirm('Excluir este orçamento?'))return;delete OQ[id];await dbs('orc',OQ);if(S.Q.id==id){S.Q=await mkQ();qfill();await dbs('qdraft',S.Q);DQ=0}rDL();rQN();rQL()}
-async function qSt(id,st){const q=OQ[id];if(!q)return;q.status=st;if(st=='Aprovado'||st=='Recusado')q.ddec=today();OQ[id]=q;await dbs('orc',OQ);if(S.Q.id==id){S.Q.status=st;if(q.ddec)S.Q.ddec=q.ddec;syncF()}rQL();toast('Marcado como '+st.toLowerCase())}
+async function qDel(id){if(!confirm('Excluir este orçamento?'))return;delete OQ[id];await dbs('orc',OQ);pend('q:'+id,'del');if(S.Q.id==id){S.Q=await mkQ();qfill();await dbs('qdraft',S.Q);DQ=0}rDL();rQN();rQL()}
+async function qSt(id,st){const q=OQ[id];if(!q)return;q.status=st;if(st=='Aprovado'||st=='Recusado')q.ddec=today();q.ts=Date.now();OQ[id]=q;await dbs('orc',OQ);pend('q:'+id,'orc');if(S.Q.id==id){S.Q.status=st;if(q.ddec)S.Q.ddec=q.ddec;syncF()}rQL();toast('Marcado como '+st.toLowerCase())}
 async function qRel(id){const q=OQ[id];if(!q)return;await sv(true);const v=qv(q),r=await mk();Object.assign(r,{cliente:q.cliente,doc:q.doc,fazenda:q.fazenda,cidade:q.cidade,uf:q.uf,ctel:q.ctel,cultura:q.cultura,vha:v.ha?(v.sub/v.ha).toFixed(2).replace('.',','):'',desc:q.desc||'',adic:q.adic||''});r.ops=q.itens.filter(i=>n(i.ha)).map(i=>({tipo:T[0],ha:i.ha,itens:[{un:'L/ha'}]}));S.R=norm(r);fill();save();await go('f');toast('Relatório criado a partir do orçamento')}
 function rQL(){const t=nz($('#qq').value).split(/\s+/).filter(Boolean),all=Object.values(OQ),L=all.filter(q=>{const h=nz([q.num,q.cliente,q.fazenda,q.cidade,q.status].join(' '));return t.every(w=>h.includes(w))}).sort((a,b)=>(b.data||'').localeCompare(a.data||'')||b.id-a.id);
 const sm=st=>all.filter(q=>q.status==st).reduce((a,q)=>a+qv(q).tot,0),cn=st=>all.filter(q=>q.status==st).length;
@@ -433,5 +433,63 @@ $('#p_q').innerHTML=`<div id="qe"><div class="two"><button class="s" onclick="qN
 <div class="gr" style="margin-top:12px">${sel('Q','status','Decisão do cliente',['Em elaboração','Enviado','Aprovado','Recusado'])}${inp('Q','ddec','Data da decisão','date')}</div><label style="margin-top:8px">Observação da decisão<textarea data-s="Q" data-k="odec" style="min-height:56px"></textarea></label></section></div>
 <div id="ql" hidden><section style="padding:12px"><div class="sbx"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input type="search" id="qq" placeholder="Buscar orçamento (cliente, fazenda, nº, situação)" oninput="rQL()" autocomplete="off"></div></section><div id="qlr"></div></div>`;
 
-lshow();
+/* ---------- nuvem da equipe (Supabase) ---------- */
+const SBU='https://mubgsmjxvvvhlzcpeakr.supabase.co',SBK='sb_publishable_5JwHEnldpC8-nQjZa2qnjQ_T5fPM5X3';
+let SESS=null,PQ={},PV={},UPL=new Set(),SYN=0,SAG=0,ST_,STARTED=0;
+const cloud=t=>{$('#cst').textContent='☁ '+t};
+function schedSync(ms){clearTimeout(ST_);ST_=setTimeout(()=>sync(),ms??2500)}
+function pend(id,k){PQ[id]=k;PV[id]=(PV[id]||0)+1;dbs('pq',PQ);if(SESS)schedSync()}
+const cfgDirty=()=>{S.C.ts=Date.now();pend('cfg','cfg')};
+async function sha(x){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x));return[...new Uint8Array(b)].slice(0,16).map(v=>v.toString(16).padStart(2,'0')).join('')}
+async function auth(body,grant){const r=await fetch(SBU+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:SBK,'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json().catch(()=>({}));
+if(!r.ok){const e=new Error(j.error_description||j.msg||j.message||('erro '+r.status));e.status=r.status;e.auth=true;throw e}
+SESS={access:j.access_token,refresh:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,email:(j.user&&j.user.email)||(SESS&&SESS.email)||''};await dbs('sess',SESS);return SESS}
+async function token(){if(!SESS){const e=new Error('sem sessão');e.auth=true;throw e}if(Date.now()>SESS.exp-60000)await auth({refresh_token:SESS.refresh},'refresh_token');return SESS.access}
+async function api(path,o={},retry=1){const t=await token(),r=await fetch(SBU+path,{...o,headers:{apikey:SBK,Authorization:'Bearer '+t,...(o.headers||{})}});if(r.status==401&&retry){SESS.exp=0;return api(path,o,0)}return r}
+async function chk(r){if(r.ok)return r;const e=new Error(r.status+' '+(await r.text().catch(()=>'')).slice(0,200));e.status=r.status;e.auth=r.status==401;throw e}
+async function upl(h,src){if(UPL.has(h))return;const b=await(await fetch(src)).blob();await chk(await api('/storage/v1/object/media/'+h,{method:'POST',headers:{'Content-Type':b.type||'image/jpeg','x-upsert':'true'},body:b}));UPL.add(h);dbs('upl',[...UPL])}
+async function dl(h){const b=await(await chk(await api('/storage/v1/object/authenticated/media/'+h))).blob();return new Promise(res=>{const f=new FileReader();f.onload=()=>res(f.result);f.readAsDataURL(b)})}
+async function pack(o,kind){const c=JSON.parse(JSON.stringify(o));
+const one=async x=>{if(!x.src)return x;x.h=x.h||await sha(x.src);await upl(x.h,x.src);delete x.src;return x};
+if(kind=='rel')for(const k of['fotos','mapas'])c[k]=await Promise.all((c[k]||[]).map(one));
+if(kind=='cfg'&&c.logo){c.logoH=await sha(c.logo);await upl(c.logoH,c.logo);delete c.logo}return c}
+async function unpack(d,old){const c=JSON.parse(JSON.stringify(d));
+const one=async(x,oa)=>{if(!x.h||x.src)return x;const o=(oa||[]).find(y=>y.h==x.h&&y.src);x.src=o?o.src:await dl(x.h);return x};
+for(const k of['fotos','mapas'])if(c[k])c[k]=await Promise.all(c[k].map(x=>one(x,old&&old[k])));
+if(c.logoH){c.logo=(old&&old.logo&&await sha(old.logo)==c.logoH)?old.logo:await dl(c.logoH);delete c.logoH}return c}
+async function push(){for(const id of Object.keys(PQ)){const k=PQ[id],v=PV[id];let row;
+if(String(k)=='del')row={id,kind:id[0]=='r'?'rel':'orc',data:{},deleted:true};
+else if(id=='cfg'){if(!S.C.ts){delete PQ[id];continue}row={id,kind:'cfg',data:await pack(S.C,'cfg'),deleted:false}}
+else if(id[0]=='r'){const r=await dbg(id);if(!r){delete PQ[id];continue}row={id,kind:'rel',data:await pack(r,'rel'),deleted:false}}
+else{const q=OQ[id.slice(2)];if(!q){delete PQ[id];continue}row={id,kind:'orc',data:q,deleted:false}}
+row.updated_at=new Date().toISOString();
+await chk(await api('/rest/v1/docs?on_conflict=id',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(row)}));
+if(PV[id]===v){delete PQ[id];delete PV[id]}await dbs('pq',PQ)}}
+async function applyDoc(d){const id=d.id,pre=id.slice(0,2),key=id.slice(2);if(PQ[id])return;
+const rts=d.deleted?Date.parse(d.updated_at):((d.data&&d.data.ts)||Date.parse(d.updated_at));
+if(id=='cfg'){if(d.deleted||rts<=(S.C.ts||0))return;S.C=await unpack(d.data,S.C);await dbs('co',S.C);syncF();rLogo();return}
+if(pre=='r:'){const loc=IX[key];
+if(d.deleted){if(loc){await dbd(id);delete IX[key];await dbs('ix',IX);if(S.R.id==key&&!DIRTY){S.R=await mk();fill();await dbs('draft',S.R)}}}
+else{if(loc&&rts<=(loc.ts||0))return;if(S.R.id==key&&DIRTY)return;const old=await dbg(id),r=norm(await unpack(d.data,old));await dbs(id,r);IX[key]=lite(r);await dbs('ix',IX);if(S.R.id==key){S.R=r;fill();await dbs('draft',r)}}}
+else if(pre=='q:'){const loc=OQ[key];
+if(d.deleted){if(loc){delete OQ[key];await dbs('orc',OQ);if(S.Q.id==key&&!DQ){S.Q=await mkQ();qfill();await dbs('qdraft',S.Q)}}}
+else{if(loc&&rts<=(loc.ts||0))return;if(S.Q.id==key&&DQ)return;const q=normQ(JSON.parse(JSON.stringify(d.data)));OQ[key]=q;await dbs('orc',OQ);if(S.Q.id==key){S.Q=normQ(JSON.parse(JSON.stringify(q)));qfill();await dbs('qdraft',S.Q)}}}
+else return;
+rDL();rQN();if(TB=='b'||TB=='r')draw();if(TB=='q'&&QS=='l')rQL()}
+async function pull(){const cur=(await dbg('cur'))||'';let off=0,adv=cur;
+for(;;){let q='/rest/v1/docs?select=*&order=updated_at.asc&limit=100&offset='+off;if(cur)q+='&updated_at=gt.'+encodeURIComponent(new Date(Date.parse(cur)-600000).toISOString());
+const rows=await(await chk(await api(q))).json();for(const d of rows){await applyDoc(d);if(!adv||Date.parse(d.updated_at)>Date.parse(adv))adv=d.updated_at}if(rows.length<100)break;off+=100}
+if(adv!==cur)await dbs('cur',adv)}
+async function sync(manual){if(!SESS||!STARTED)return;if(SYN){SAG=1;return}SYN=1;cloud('sincronizando…');
+try{if(!navigator.onLine)throw new TypeError('offline');
+if(!(await dbg('cinit'))){for(const id in IX){PQ['r:'+id]='rel';PV['r:'+id]=1}for(const id in OQ){PQ['q:'+id]='orc';PV['q:'+id]=1}if(S.C.nome||S.C.logo){S.C.ts=S.C.ts||Date.now();PQ.cfg='cfg';PV.cfg=1}await dbs('pq',PQ)}
+await push();await pull();await dbs('cinit',1);cloud('sincronizado '+hm());const e=$('#syn');if(e)e.textContent='Última sincronização: '+new Date().toLocaleString('pt-BR')+(Object.keys(PQ).length?'':'')}
+catch(e){const m=$('#syn');if(e instanceof TypeError){cloud('sem conexão');if(m)m.textContent='Sem conexão. As alterações ficam salvas aqui e serão enviadas depois.'}else if(e.auth&&(e.status==400||e.status==401||!e.status)){cloud('entre de novo');SESS=null;await dbs('sess',null);lshow()}else{cloud('erro');if(m)m.textContent='Erro ao sincronizar: '+e.message;console.warn(e)}}
+finally{SYN=0;if(SAG){SAG=0;schedSync(500)}}}
+setInterval(()=>{if(SESS&&STARTED&&!document.hidden&&navigator.onLine)sync()},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SESS&&STARTED)schedSync(300)});
+addEventListener('online',()=>{if(SESS&&STARTED)schedSync(300)});
+async function boot(){SESS=await dbg('sess');PQ=(await dbg('pq'))||{};UPL=new Set((await dbg('upl'))||[]);for(const k in PQ)PV[k]=1;if(SESS)await start();else lshow()}
+
+boot();
 </script></body></html>
