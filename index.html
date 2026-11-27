@@ -119,7 +119,7 @@ button svg.ic:only-child,b svg.ic,button>svg.ic{margin:0}
 .kp b{display:block;font:600 calc(20px*var(--fs,1)) var(--serif);color:var(--hd)}.kp small{display:block;font-size:calc(11px*var(--fs,1));margin-top:3px}
 .kp .eq{grid-column:span 2;background:var(--g2);border-color:var(--g2);color:var(--on)}.kp .eq b{color:var(--on);font-size:calc(24px*var(--fs,1))}
 .rc{padding:12px;margin-bottom:10px;background:var(--card);border:1px solid var(--bd);border-left:3px solid var(--tx);border-radius:var(--r)}
-.rt{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:calc(16px*var(--fs,1))}.rt b{color:var(--hd)}
+.rt{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:calc(16px*var(--fs,1))}.rt b{color:var(--hd)}.rt>:first-child{min-width:0;overflow-wrap:anywhere}.rt>.bd{flex:none}
 .rm{font-size:calc(13px*var(--fs,1));color:var(--gy)}.rn{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0;font-size:calc(14px*var(--fs,1))}
 .bd,.an-b{display:inline-flex;align-items:center;gap:6px;font:600 calc(13px*var(--fs,1)) var(--sans);white-space:nowrap;background:none}
 .bd::before,.an-b::before{content:"";width:10px;height:10px;border:1.5px solid currentColor;border-radius:50%}
@@ -229,7 +229,9 @@ const dbc=()=>DB.then(d=>new Promise(r=>{const t=d.transaction('s','readwrite');
 const dbg=k=>DB.then(d=>new Promise(r=>{const q=d.transaction('s').objectStore('s').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})).catch(()=>{});
 const pill=t=>{$('#sst').textContent=t},hm=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 let tsv,tsq;const save=()=>{DIRTY=1;pill('Editando…');clearTimeout(tsv);tsv=setTimeout(()=>sv(true),5000);clearTimeout(tm);tm=setTimeout(async()=>{await dbs('draft',S.R);await dbs('co',S.C);pill('Rascunho salvo '+hm())},700)};
-const n=v=>parseFloat(String(v||0).replace(/\./g,m=>/,/.test(v)?'':m).replace(',','.'))||0;
+/* nd: doses (ponto vale como decimal). n: área e valores, em que "15.000" é quinze mil */
+const nd=v=>parseFloat(String(v||0).replace(/\./g,m=>/,/.test(v)?'':m).replace(',','.'))||0;
+const n=v=>typeof v=='string'&&/^\s*-?[1-9]\d{0,2}(\.\d{3})+\s*$/.test(v)?+v.replace(/\./g,''):nd(v);
 const fmt=v=>v.toLocaleString('pt-BR',{maximumFractionDigits:2}),brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),dt=d=>d?d.split('-').reverse().join('/'):'';
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),today=()=>ymd(new Date());
@@ -278,7 +280,7 @@ busy();(k=='mapas'?rMap:rPh)();save();toast(ok+' imagem(ns) adicionada(s)'+(ok<f
 const tpOf=it=>it.tp||(/^(kg|g)\//.test(it.un||'')?'sol':'liq');
 const UNS={liq:['L/ha','mL/ha'],sol:['kg/ha','g/ha']};
 function qf(v,u){u=(u||'L/ha').replace('/ha','');if(u=='mL'&&Math.abs(v)>=1000){v/=1000;u='L'}else if(u=='g'&&Math.abs(v)>=1000){v/=1000;u='kg'}else if(u=='L'&&v>0&&v<1){v*=1000;u='mL'}else if(u=='kg'&&v>0&&v<1){v*=1000;u='g'}return fmt(v)+' '+u}
-function sums(ops){let l=0,s=0;(ops||[]).forEach(o=>{const h=n(o.ha);(o.itens||[]).forEach(x=>{const d=n(x.dose)*h,u=x.un||'L/ha';if(u=='L/ha')l+=d;else if(u=='mL/ha')l+=d/1e3;else if(u=='kg/ha')s+=d;else if(u=='g/ha')s+=d/1e3})});return{l,s}}
+function sums(ops){let l=0,s=0;(ops||[]).forEach(o=>{const h=n(o.ha);(o.itens||[]).forEach(x=>{const d=nd(x.dose)*h,u=x.un||'L/ha';if(u=='L/ha')l+=d;else if(u=='mL/ha')l+=d/1e3;else if(u=='kg/ha')s+=d;else if(u=='g/ha')s+=d/1e3})});return{l,s}}
 const lavO=()=>(S.C.lav=S.C.lav||{});
 const eqL=k=>{const a=k=='d'?S.C.drones:S.C.mist;return Array.isArray(a)?a:[]};
 const hbOf=r=>uniq((r.ops||[]).flatMap(o=>o.hb=='sim'?(o.itens||[]).filter(i=>i.hb&&i.nome).map(i=>i.nome):[]));
@@ -355,8 +357,8 @@ if(RV=='voo'&&window.rVoos)rVoos();if(RV=='apl'&&window.rVo)rVo();try{calc()}cat
 function rvOpen(k){rvShow(k)}
 async function rvBack(){try{await dbs('draft',S.R)}catch(e){}await sv(true);rvShow('')}
 function rDL(){const L=Object.values(IX),o=(id,a)=>{$('#'+id).innerHTML=uniq(a).map(v=>`<option value="${esc(v)}">`).join('')};const Qs=Object.values(OQ);o('dl_cli',[...L,...Qs].map(r=>r.cliente));o('dl_reg',[...L,...Qs].map(r=>rgn(r)));o('dl_cul',[...CUL,...L.map(r=>r.cultura)]);o('dl_prod',L.flatMap(r=>items(r).map(x=>x.i.nome)));o('dl_drone',L.map(r=>r.drone))}
-const pvOp=o=>(o.itens||[]).reduce((a,x)=>{const d=n(x.dose),u=x.un||'L/ha';return a+(u=='L/ha'?d:u=='mL/ha'?d/1e3:0)},0);
-const psOp=o=>(o.itens||[]).reduce((a,x)=>{const d=n(x.dose),u=x.un||'L/ha';return a+(u=='kg/ha'?d:u=='g/ha'?d/1e3:0)},0);
+const pvOp=o=>(o.itens||[]).reduce((a,x)=>{const d=nd(x.dose),u=x.un||'L/ha';return a+(u=='L/ha'?d:u=='mL/ha'?d/1e3:0)},0);
+const psOp=o=>(o.itens||[]).reduce((a,x)=>{const d=nd(x.dose),u=x.un||'L/ha';return a+(u=='kg/ha'?d:u=='g/ha'?d/1e3:0)},0);
 /* Água sobre os produtos: 50% (60% se houver mais de 1,5 kg de pó na operação). Campo manual (o.apct) tem prioridade. Sólido conta 1 kg = 1 L. */
 const qh=v=>qf(v,'L')+'/ha';
 function pmData(o){const R=S.R,h=n(o.ha),pv=pvOp(o),ps=psOp(o),P=pv+ps,auto=ps*h>1.5?60:50,man=String(o.apct==null?'':o.apct).trim()!=='',p=man?Math.min(80,Math.max(50,n(o.apct))):auto;
@@ -365,17 +367,17 @@ const k=p/(100-p),big=P>=2.5,sug=P>0?Math.ceil(P/(1-p/100)*2-1e-9)/2:0,lhIn=n(o.
 return{p,auto,man,pv,ps,P,big,sug,v50:P/.5,v80:P/.2,h,lh,lhE:lh,lhSug:!(lhIn>0)&&big,tk,tkDef:!(tkIn>0),tot,perTank,aguaFill:lh>0?tk-perTank:0,prodH:P,aguaH:P*k,mixH:P*(1+k),agua:tot*k,mix:tot+tot*k,aguaTank:perTank*k,mixTank:perTank+perTank*k}}
 /* Teste de garrafa: divide as doses pelo fator (calda real ÷ volume do teste) */
 function tgData(o){const R=S.R,lh=pmData(o).lhE;if(!(lh>0))return null;const real=n(o.tr)||pmData(o).tk,mL=n(o.tt)||500,V=mL/1000,f=real/V,pm=pmData(o);
-const rows=(o.itens||[]).filter(x=>x.nome||n(x.dose)).map(x=>({nome:x.nome||'Produto',u:x.un||'L/ha',q:n(x.dose)/lh*V}));
+const rows=(o.itens||[]).filter(x=>x.nome||nd(x.dose)).map(x=>({nome:x.nome||'Produto',u:x.un||'L/ha',q:nd(x.dose)/lh*V}));
 const pvT=pm.pv/lh*V,sT=pm.ps/lh*V;return{real,mL,V,f,rows,pvT,sT,pre:(pvT+sT)*pm.p/(100-pm.p),agua:V-pvT-sT,p:pm.p}}
 function pmRender(o,i){const e=$('#pmx'+i);if(!e)return;const pm=pmData(o),R=S.R,pi=$('#apct'+i),a=$('#gtr'+i),b=$('#gtt'+i),te=$('#tst'+i);
 if(pi)pi.placeholder='Automático: '+pm.auto+'%';if(a)a.placeholder=fmt(n(R.tanque)||20);if(b)b.placeholder='500';
 const sm=$('#sm'+i),vz=$('#vz'+i),tw=$('#tkw'+i);
 if(sm)sm.innerHTML=!pm.P?'Informe as doses para somar os produtos.':'Soma dos produtos: <b>'+fmt(pm.P)+' L/ha</b> ('+(pm.pv?fmt(pm.pv)+' L de líquidos':'')+(pm.pv&&pm.ps?' + ':'')+(pm.ps?fmt(pm.ps)+' kg de sólidos':'')+'; 1 kg = 1 L)'+(pm.h>0?'<br>Para '+fmt(pm.h)+' ha: <b>'+fmt(pm.tot)+' L</b> de produtos':'');
 if(vz){if(!pm.P)vz.innerHTML='';else if(pm.big){const ok=n(o.lha)>0&&Math.abs(n(o.lha)-pm.sug)<.01;vz.innerHTML='<b>Quantidade grande de produto (2,5 L ou kg/ha ou mais)</b><br>'+fmt(pm.P)+' L/ha de produtos + '+fmt(pm.aguaH)+' L/ha de água ('+fmt(pm.p)+'%) = '+fmt(pm.P+pm.aguaH)+' L/ha<br>Vazão sugerida: <b>'+fmt(pm.sug)+' L/ha</b><br><small>Com 50% a 80% de água, a vazão fica entre '+fmt(pm.v50)+' e '+fmt(pm.v80)+' L/ha.</small>'+(ok?'<br><small>Esta vazão já está na Calda (L/ha).</small>':'<button style="width:100%;margin-top:8px;min-height:44px" onclick="usarVz('+i+')">Usar '+fmt(pm.sug)+' L/ha como calda</button>')}else vz.innerHTML='Produtos somam '+fmt(pm.P)+' L/ha, abaixo de 2,5: use a vazão normal do drone na Calda (L/ha).<br><small>Referência com '+fmt(pm.p)+'% de água: '+fmt(pm.P)+' + '+fmt(pm.aguaH)+' = '+fmt(pm.P+pm.aguaH)+' L/ha de vazão.</small>'}
-if(tw){if(!(pm.lh>0))tw.innerHTML='Informe a calda (L/ha) ou use a vazão sugerida para ver a água do tanque.';else if(pm.aguaFill<0)tw.innerHTML='Atenção: os produtos passam do volume do tanque de '+fmt(pm.tk)+' L.';else tw.innerHTML='Tanque de '+fmt(pm.tk)+' L'+(pm.tkDef?' (padrão)':'')+' feito na hora:<br>Água do tanque: <b>'+qf(pm.aguaFill,'L')+'</b>'+(o.itens||[]).filter(x=>x.nome||n(x.dose)).map(x=>'<br>'+esc(x.nome||'Produto')+': <b>'+qf(n(x.dose)*pm.tk/pm.lh,x.un)+'</b>').join('')}
+if(tw){if(!(pm.lh>0))tw.innerHTML='Informe a calda (L/ha) ou use a vazão sugerida para ver a água do tanque.';else if(pm.aguaFill<0)tw.innerHTML='Atenção: os produtos passam do volume do tanque de '+fmt(pm.tk)+' L.';else tw.innerHTML='Tanque de '+fmt(pm.tk)+' L'+(pm.tkDef?' (padrão)':'')+' feito na hora:<br>Água do tanque: <b>'+qf(pm.aguaFill,'L')+'</b>'+(o.itens||[]).filter(x=>x.nome||nd(x.dose)).map(x=>'<br>'+esc(x.nome||'Produto')+': <b>'+qf(nd(x.dose)*pm.tk/pm.lh,x.un)+'</b>').join('')}
 e.innerHTML=!pm.tot?'Informe hectares e doses para calcular a pré-mistura.':'Pré-mistura com '+fmt(pm.p)+'% de água ('+(pm.man?'manual':'automático')+'): <b>'+qh(pm.aguaH)+' de água</b> para '+qh(pm.prodH)+' de produtos'+'';
 if(te){const t=tgData(o);te.innerHTML=!t?'Informe a calda (L/ha) para calcular o teste.':'Fator de divisão: <b>÷ '+fmt(t.f)+'</b> ('+fmt(t.real)+' L para '+fmt(t.mL)+' mL)'+(t.rows.length?'<br>'+t.rows.map(r=>esc(r.nome)+': <b>'+qf(r.q,r.u)+'</b>').join('<br>'):'')+(pm.tot?'<br>Água sobre os produtos ('+fmt(t.p)+'%): <b>'+qf(t.pre,'L')+'</b>':'')+(t.agua>0?'<br>Água para completar '+fmt(t.mL)+' mL: <b>'+qf(t.agua,'L')+'</b> <small>(inclui a água sobre os produtos)</small>':'<br>Atenção: os produtos líquidos passam do volume do teste.')}}
-function calc(){const R=S.R;if(!R.ops)return{ha:0,cl:0,ac:0,tot:0,fin:0,sal:0};let hr=0,cl=0;R.ops.forEach((o,i)=>{const h=n(o.ha),t=h*pmData(o).lhE;hr+=h;cl+=t;const e=$('#ot'+i);if(e)e.textContent=fmt(t)+' L';const ag=$('#ag'+i);if(ag){const pm=pmData(o),lh=pm.lhE,P=pm.P,w=lh-P;ag.innerHTML=!lh?'Informe a calda (L/ha) para calcular a água.':w<0?'Atenção: os produtos somam '+fmt(P)+' L/ha (sólido: 1 kg = 1 L), mais que a calda ('+fmt(lh)+' L/ha).':'Água necessária: <b>'+fmt(w)+' L/ha</b> (calda '+fmt(lh)+' L/ha − produtos '+fmt(P)+' L/ha)'+(h>0?'<br>Para '+fmt(h)+' ha: <b>'+fmt(w*h)+' L de água</b> + '+fmt(P*h)+' de produtos = '+fmt(lh*h)+' L de calda':'')}const q=$('#tt'+i);if(q)q.textContent=(o.itens||[]).filter(x=>x.nome||x.dose).map(x=>(x.nome||'Produto')+': '+qf(n(x.dose)*h,x.un)).join('  |  ')||'O total de cada produto aparece aqui';pmRender(o,i)});
+function calc(){const R=S.R;if(!R.ops)return{ha:0,cl:0,ac:0,tot:0,fin:0,sal:0};let hr=0,cl=0;R.ops.forEach((o,i)=>{const h=n(o.ha),t=h*pmData(o).lhE;hr+=h;cl+=t;const e=$('#ot'+i);if(e)e.textContent=fmt(t)+' L';const ag=$('#ag'+i);if(ag){const pm=pmData(o),lh=pm.lhE,P=pm.P,w=lh-P;ag.innerHTML=!lh?'Informe a calda (L/ha) para calcular a água.':w<0?'Atenção: os produtos somam '+fmt(P)+' L/ha (sólido: 1 kg = 1 L), mais que a calda ('+fmt(lh)+' L/ha).':'Água necessária: <b>'+fmt(w)+' L/ha</b> (calda '+fmt(lh)+' L/ha − produtos '+fmt(P)+' L/ha)'+(h>0?'<br>Para '+fmt(h)+' ha: <b>'+fmt(w*h)+' L de água</b> + '+fmt(P*h)+' de produtos = '+fmt(lh*h)+' L de calda':'')}const q=$('#tt'+i);if(q)q.textContent=(o.itens||[]).filter(x=>x.nome||x.dose).map(x=>(x.nome||'Produto')+': '+qf(nd(x.dose)*h,x.un)).join('  |  ')||'O total de cada produto aparece aqui';pmRender(o,i)});
 const ha=hr>0?hr:n(R.hat);const sm=sums(R.ops);$('#sumA').textContent=`Área na receita: ${fmt(hr)} ha  |  Calda total: ${fmt(cl)} L`+(sm.l>0?`  |  Líquidos: ${qf(sm.l,'L')}`:'')+(sm.s>0?`  |  Sólidos: ${qf(sm.s,'kg')}`:'')+(sm.l+sm.s>0?`  |  Total de produtos: ${fmt(sm.l+sm.s)} (L + kg)`:'');
 const ac=(R.acob??'')!==''?n(R.acob):ha,tot=ac*n(R.vha),fin=tot-n(R.desc)+n(R.adic),sal=fin-n(R.rec);
 const fe=$('#fin');if(fe)fe.innerHTML=n(R.vha)>0?`<div>Valor total do serviço<b>${brl(tot)}</b></div><div class="k">Valor final do serviço<b>${brl(fin)}</b></div>`:'';
@@ -474,7 +476,7 @@ need(100);y+=50;g.strokeStyle=RP_TX;const sw=(W-2*M)/2-20;
 need(76);{const bw=(W-2*M-20)/3;[['ÁREA APLICADA',fmt(f.ha)+' ha'],['CALDA TOTAL',fmt(f.cl)+' L'],['CULTURA',R.cultura||'—']].forEach((x,i)=>{const x0=M+i*(bw+10);rr(x0,y,bw,58,10,i?LT:GR);txt(x[0],x0+12,y+11,9,i?GY:RP_MUT,'bold');txt(x[1],x0+12,y+29,i==2?15:20,i?GR:'#fff','bold','left',bw-24)});y+=72}
 sec('Dados do cliente');grid([['CLIENTE',R.cliente],['REGIÃO',rgn(R)],['TELEFONE',R.ctel]]);
 sec('Dados técnicos da aplicação');const ap=([['DATA',dt(R.data)],['ALTURA DE VOO',R.altura?R.altura+' m':''],['VELOCIDADE',R.vel?R.vel+' km/h':'']]);const cd=[R.vento&&'Vento '+R.vento+' km/h',R.temp&&'Temp. '+R.temp+' °C',R.umid&&'Umid. '+R.umid+' %'].filter(Boolean).join('  ·  ');if(R.drone)ap.push(['DRONE / EQUIPAMENTO',R.drone]);if(R.faixa)ap.push(['FAIXA DE APLICAÇÃO',R.faixa+' m']);if(cd)ap.push(['CONDIÇÕES DO TEMPO',cd]);grid(ap);
-if(R.ops.some(o=>n(o.ha)||(o.itens||[]).some(t=>t.nome||t.dose)))sec('Receita e operações');R.ops.forEach((o,i)=>{const its=(o.itens||[]).filter(t=>t.nome||t.dose);if(!its.length&&!n(o.ha))return;need(110);txt('Operação '+(i+1)+' — '+(o.tipo||''),M,y,12,GR,'bold');y+=18;txt('Área: '+fmt(n(o.ha))+' ha   |   Calda: '+fmt(n(o.lha))+' L/ha   |   Total de calda: '+fmt(n(o.ha)*n(o.lha))+' L'+(n(o.lha)>pvOp(o)+psOp(o)?'   |   Água: '+fmt((n(o.lha)-pvOp(o)-psOp(o))*n(o.ha))+' L':''),M,y,11,GY);y+=20;tbl(['Produto da receita','Quantidade por hectare','Total na operação'],its.map(t=>{const u=t.un||'L/ha';return[t.nome||'—',fmt(n(t.dose))+' '+u,fmt(n(t.dose)*n(o.ha))+' '+u.replace('/ha','')]}),[.46,.27,.27],['l','r','r'])});
+if(R.ops.some(o=>n(o.ha)||(o.itens||[]).some(t=>t.nome||t.dose)))sec('Receita e operações');R.ops.forEach((o,i)=>{const its=(o.itens||[]).filter(t=>t.nome||t.dose);if(!its.length&&!n(o.ha))return;need(110);txt('Operação '+(i+1)+' — '+(o.tipo||''),M,y,12,GR,'bold');y+=18;txt('Área: '+fmt(n(o.ha))+' ha   |   Calda: '+fmt(n(o.lha))+' L/ha   |   Total de calda: '+fmt(n(o.ha)*n(o.lha))+' L'+(n(o.lha)>pvOp(o)+psOp(o)?'   |   Água: '+fmt((n(o.lha)-pvOp(o)-psOp(o))*n(o.ha))+' L':''),M,y,11,GY);y+=20;tbl(['Produto da receita','Quantidade por hectare','Total na operação'],its.map(t=>{const u=t.un||'L/ha';return[t.nome||'—',fmt(nd(t.dose))+' '+u,fmt(nd(t.dose)*n(o.ha))+' '+u.replace('/ha','')]}),[.46,.27,.27],['l','r','r'])});
 
 if(R.mapas.length){const N=R.mapas.length;need(360);sec(N>1?'Mapas da área aplicada':'Mapa da área aplicada');for(let i=0;i<N;i++){const m=R.mapas[i];if(i)need(330);await pic(m.src,W-2*M,Math.min(820,Hh-60-y-40),(N>1?'Mapa '+(i+1)+' de '+N+(m.leg?' — ':''):'')+(m.leg||''))}}
 if(R.fotos.length){need(280);sec('Registros fotográficos');const fw=(W-2*M-16)/2;
@@ -567,7 +569,7 @@ const gsort=l=>{const k={n:(a,b)=>b.n-a.n||nz(a.nome).localeCompare(nz(b.nome)),
 const mp=(m,v)=>{if(v&&String(v).trim())m.set(nt(v),String(v).trim())};
 const lst=m=>[...m.values()].join(', '),lse=m=>esc(lst(m));
 function gCli(l){const G={};l.forEach(r=>{const f=fx(r),k=nt(r.cliente)||'—',g=G[k]=G[k]||{nome:r.cliente||'Sem cliente',n:0,ha:0,fin:0,sal:0,last:'',reg:new Map(),cul:new Map()};g.n++;g.ha+=f.ha;g.fin+=f.fin;g.sal+=f.sal;if((r.data||'')>g.last)g.last=r.data||'';mp(g.reg,rgn(r));mp(g.cul,r.cultura)});return gsort(Object.values(G))}
-function gProd(l){const t=terms(),G={};l.forEach(r=>{const b=base(r);items(r).forEach(x=>{const nm=nt(x.i.nome);if(!nm)return;if(FL.ex&&FL.ex.c=='produto'&&nm!=nt(FL.ex.v))return;if(t.length&&!t.every(w=>(b+' '+nm).includes(w)))return;const u=x.i.un||'L/ha',k=nm+'|'+u,g=G[k]=G[k]||{nome:x.i.nome.trim(),u,n:0,q:0,ha:0,last:'',cli:new Map(),cul:new Map(),rows:[]},q=n(x.i.dose)*n(x.o.ha);g.n++;g.q+=q;g.ha+=n(x.o.ha);if((r.data||'')>g.last)g.last=r.data||'';mp(g.cli,r.cliente);mp(g.cul,r.cultura);g.rows.push({r,u,dose:n(x.i.dose),q,ha:n(x.o.ha)})})});return gsort(Object.values(G))}
+function gProd(l){const t=terms(),G={};l.forEach(r=>{const b=base(r);items(r).forEach(x=>{const nm=nt(x.i.nome);if(!nm)return;if(FL.ex&&FL.ex.c=='produto'&&nm!=nt(FL.ex.v))return;if(t.length&&!t.every(w=>(b+' '+nm).includes(w)))return;const u=x.i.un||'L/ha',k=nm+'|'+u,g=G[k]=G[k]||{nome:x.i.nome.trim(),u,n:0,q:0,ha:0,last:'',cli:new Map(),cul:new Map(),rows:[]},q=nd(x.i.dose)*n(x.o.ha);g.n++;g.q+=q;g.ha+=n(x.o.ha);if((r.data||'')>g.last)g.last=r.data||'';mp(g.cli,r.cliente);mp(g.cul,r.cultura);g.rows.push({r,u,dose:nd(x.i.dose),q,ha:n(x.o.ha)})})});return gsort(Object.values(G))}
 function gArea(l){const G={},B=FL.gb;l.forEach(r=>{const f=fx(r);if(B=='tipo'){(r.ops||[]).forEach(o=>{if(!n(o.ha)&&!(o.itens||[]).some(i=>i.nome))return;const k=nt(o.tipo)||'—',g=G[k]=G[k]||{nome:o.tipo||'Não informado',v:o.tipo,n:0,ha:0,cal:0,last:'',cli:new Map(),cul:new Map(),reg:new Map()};g.n++;g.ha+=n(o.ha);g.cal+=n(o.ha)*n(o.lha);if((r.data||'')>g.last)g.last=r.data||'';mp(g.cli,r.cliente);mp(g.cul,r.cultura);mp(g.reg,rgn(r))});return}
 let k,nome,v,sub='';if(B=='regiao'){k=nt(rgn(r));nome=rgn(r)||'Sem região informada';v=rgn(r)}else{k=nt(r.cultura);nome=r.cultura||'Sem cultura informada';v=r.cultura}
 const g=G[k]=G[k]||{nome,v,sub,n:0,ha:0,fin:0,sal:0,last:'',cli:new Map(),cul:new Map(),reg:new Map()};g.n++;g.ha+=f.ha;g.fin+=f.fin;g.sal+=f.sal;if((r.data||'')>g.last)g.last=r.data||'';mp(g.cli,r.cliente);mp(g.cul,r.cultura);mp(g.reg,rgn(r))});return gsort(Object.values(G))}
@@ -596,7 +598,7 @@ $('#rb').innerHTML=h}
 function rR(){rMes();const l=filt('x'),all=Object.keys(IX).length;if(!all){$('#rr').innerHTML=hcard()+'<div class="em">Sem dados ainda. Salve relatórios para ver o resumo.</div>';return}
 const pl=(FL.a||FL.b)?(dt(FL.a)||'início')+' a '+(dt(FL.b)||'hoje'):'Todo o período',ST={'Em andamento':[0,0],'Finalizada':[0,0]},Mo={},C={},P={};
 l.forEach(r=>{const f=fx(r),z=isFz(r),a=ST[stOf(r)];a[0]++;a[1]+=f.ha;const k=(r.data||'').slice(0,7)||'0',m=Mo[k]=Mo[k]||{n:0,nf:0,ha:0};m.n++;if(z){m.nf++;m.ha+=f.ha}const ck=nz(r.cliente)||'—',c=C[ck]=C[ck]||{nome:r.cliente||'Sem cliente',n:0,ha:0};if(z){c.n++;c.ha+=f.ha}
-items(r).forEach(x=>{if(!x.i.nome)return;const u=x.i.un||'L/ha',pk=nt(x.i.nome)+'|'+u,p=P[pk]=P[pk]||{nome:x.i.nome.trim(),u,c:0,q:0,ha:0};p.c++;p.q+=n(x.i.dose)*n(x.o.ha);p.ha+=n(x.o.ha)})});
+items(r).forEach(x=>{if(!x.i.nome)return;const u=x.i.un||'L/ha',pk=nt(x.i.nome)+'|'+u,p=P[pk]=P[pk]||{nome:x.i.nome.trim(),u,c:0,q:0,ha:0};p.c++;p.q+=nd(x.i.dose)*n(x.o.ha);p.ha+=n(x.o.ha)})});
 const ks=Object.keys(Mo).sort(),mx=Math.max(1,...ks.map(k=>Mo[k].ha)),mn=k=>k=='0'?'Sem data':new Date(+k.slice(0,4),+k.slice(5,7)-1,1).toLocaleDateString('pt-BR',{month:'short',year:'numeric'});
 const tc=Object.values(C).filter(c=>c.n).sort((a,b)=>b.ha-a.ha).slice(0,8),tp=Object.values(P).sort((a,b)=>b.c-a.c||b.q-a.q).slice(0,10);
 $('#rr').innerHTML=hcard()+`<p style="margin:0 2px 8px;color:var(--gy)">Período: <b>${pl}</b></p>${kpi(l)}
@@ -612,7 +614,7 @@ function mrData(k,sit){const G={n:0,ha:0,ops:0,cal:0,dias:new Set()},TP={},CU={}
 Object.values(IX).forEach(r=>{if(mrKey(r)!=k||(sit=='f'&&!isFz(r)))return;const ha=fx(r).ha;G.n++;G.ha+=ha;if(r.data)G.dias.add(r.data);
 const ck=nt(r.cultura)||'-',cg=CU[ck]=CU[ck]||{nome:r.cultura?String(r.cultura).trim():'Não informada',n:0,ha:0};cg.n++;cg.ha+=ha;
 const rk=nt(rgn(r))||'-',rg=RG[rk]=RG[rk]||{nome:rgn(r)||'Não informada',n:0,ha:0};rg.n++;rg.ha+=ha;
-const ts=new Set();(r.ops||[]).forEach(o=>{if(!n(o.ha)&&!(o.itens||[]).some(i=>i.nome||n(i.dose)))return;const tk=nt(o.tipo)||'-',tp=TP[tk]=TP[tk]||{nome:o.tipo||'Não informado',n:0,ha:0};tp.n++;tp.ha+=n(o.ha);G.ops++;G.cal+=n(o.ha)*n(o.lha);ts.add(o.tipo||'Não informado')});
+const ts=new Set();(r.ops||[]).forEach(o=>{if(!n(o.ha)&&!(o.itens||[]).some(i=>i.nome||nd(i.dose)))return;const tk=nt(o.tipo)||'-',tp=TP[tk]=TP[tk]||{nome:o.tipo||'Não informado',n:0,ha:0};tp.n++;tp.ha+=n(o.ha);G.ops++;G.cal+=n(o.ha)*n(o.lha);ts.add(o.tipo||'Não informado')});
 L.push({r,ha,tipos:[...ts].join(', '),cul:r.cultura||'',reg:rgn(r),sit:stOf(r)})});
 const so=a=>Object.values(a).sort((x,y)=>y.ha-x.ha||y.n-x.n);
 L.sort((a,b)=>(a.r.data||'').localeCompare(b.r.data||'')||a.r.id-b.r.id);
@@ -804,8 +806,8 @@ its.forEach((it,k)=>{const u=it.un||'L/ha',nl=wrap(it.nome||'Produto',410,34,'bo
 if(k%2==0)rr(X-8,y-4,AW-2*X+16,rh,12,RP_LT2);
 g.strokeStyle=RP_TX;g.lineWidth=2;g.strokeRect(X,y+rh/2-19,30,30);g.lineWidth=1;
 nl.forEach((l,j)=>t(l,X+46,y+10+j*40,34,RP_TX,'bold'));
-t('Dose: '+fmt(n(it.dose))+' '+u+' · '+(tpOf(it)=='sol'?'Sólido':'Líquido')+(it.hb?' · HERBICIDA':''),X+46,y+10+nl.length*40,18,GY,'bold','left',410);
-rr(AW-X-240,y+rh/2-30,240,60,14,GR);t(qf(n(it.dose)*h,u),AW-X-120,y+rh/2-20,34,'#fff','bold','center',224);
+t('Dose: '+fmt(nd(it.dose))+' '+u+' · '+(tpOf(it)=='sol'?'Sólido':'Líquido')+(it.hb?' · HERBICIDA':''),X+46,y+10+nl.length*40,18,GY,'bold','left',410);
+rr(AW-X-240,y+rh/2-30,240,60,14,GR);t(qf(nd(it.dose)*h,u),AW-X-120,y+rh/2-20,34,'#fff','bold','center',224);
 y+=rh+4});
 y+=12;{const tg=(n(o.tr)>0||n(o.tt)>0)?tgData(o):null;if(tg){need(120+tg.rows.length*28);rr(X,y,AW-2*X,50,12,'#fbe3d8');t('TESTE DE GARRAFA · '+fmt(tg.mL)+' mL',X+14,y+14,22,'#a8341a','bold','left',430);t('fator ÷ '+fmt(tg.f),AW-X-14,y+10,30,'#a8341a','bold','right');y+=60;tg.rows.forEach(r=>{t(r.nome+': '+qf(r.q,r.u),X,y,20,RP_TX,'bold','left',AW-2*X);y+=28});if(pm.tot>0){t('Água sobre os produtos: '+qf(tg.pre,'L'),X,y,20,RP_TX,'bold');y+=28}t('Água para completar '+fmt(tg.mL)+' mL: '+qf(Math.max(tg.agua,0),'L'),X,y,20,RP_TX,'bold');y+=36}}
 y+=16});
